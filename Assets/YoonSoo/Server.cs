@@ -1,43 +1,69 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 
 using UnityEngine;
 
 namespace DireRaven22075
-{    public class Server : Singleton<NetworkManager>
+{
+    public class Server : Singleton<NetworkManager>
     {
-        private const Boolean print = true;
-        protected override void Awake()
-        {
+        #region private members
+        private TcpListener tcpListener;
+        private Thread tcpListenerThread;
+        private TcpClient connectedTcpClient;
+        #endregion
+
+        protected override void Awake() {
             base.Awake();
-            StartServer();
+             // Start TcpServer background thread
+            tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequest));
+            tcpListenerThread.IsBackground = true;
+            tcpListenerThread.Start();
         }
 
-        private void StartServer()
+        // Update is called once per frame
+        void Update()
         {
 
         }
 
-        private void IncommingHandler()
+        // Runs in background TcpServerThread; Handles incomming TcpClient requests
+        private void ListenForIncommingRequest()
         {
-            TcpListener server = null;
             try
             {
-                Int32 port = 13000;
-                IPAddress localAddr = IPAddress.Parse("localhost");
+                // Create listener on 192.168.0.2 port 50001
+                tcpListener = new TcpListener(IPAddress.Loopback, 50001);
+                tcpListener.Start();
+                Debug.Log("Server is listening");
+
+                while (true)
+                {
+                    using (connectedTcpClient = tcpListener.AcceptTcpClient())
+                    {
+                        // Get a stream object for reading
+                        using (NetworkStream stream = connectedTcpClient.GetStream())
+                        {
+                            // Read incomming stream into byte array.
+                            do
+                            {
+                                Debug.Log(stream.ReadByte());
+                                // TODO
+                            } while (true);
+                        }
+                    }
+                }
             }
-            catch (SocketException e)
+            catch (SocketException socketException)
             {
-                Console.WriteLine("SocketException: {0}", e);
-            }
-            finally
-            {
-                server.Stop();
+                Debug.Log("SocketException " + socketException.ToString());
             }
         }
     }
