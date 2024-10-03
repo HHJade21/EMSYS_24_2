@@ -22,14 +22,13 @@ namespace DireRaven22075
         private Byte[] bytes;
         public void Start()
         {
-            ConnectToTcpServer();
         }
 
         private void ConnectToTcpServer()
         {
             try
             {
-                socketConnection = new TcpClient("127.0.0.1", 50001);
+                socketConnection = new TcpClient("127.0.0.1", Constants.port);
             }
             catch (Exception e)
             {
@@ -40,6 +39,7 @@ namespace DireRaven22075
         {
             if (Input.GetKeyDown(press))
             {
+                ConnectToTcpServer();
                 SendMessage(bytes);
             }
         }
