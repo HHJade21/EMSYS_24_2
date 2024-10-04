@@ -15,20 +15,22 @@ namespace DireRaven22075
     public class Server : Singleton<NetworkManager>
     {
         private TcpListener server;
+        [SerializeField]
         private TcpClient[] clients = new TcpClient[Constants.maxConnection];
 
+        [SerializeField]
         private volatile int clientCount = 0;
         protected override void Awake()
         {
             base.Awake();
             server = new TcpListener(IPAddress.Any, Constants.port);
-            Debug.Log("서버가 시작되었습니다. 포트 5000에서 대기 중...");
+            Debug.Log($"서버가 시작되었습니다. 포트 {Constants.port}에서 대기 중...");
             server.Start();
             StartServer();
         }
         private async void StartServer()
         {
-            while (true)
+            while (clientCount < Constants.maxConnection)
             {
                 if (clientCount < Constants.maxConnection)
                 {
@@ -48,15 +50,30 @@ namespace DireRaven22075
         }
         private void HandleClient(TcpClient client, int index)
         {
-            using (client)
+            NetworkStream stream = client.GetStream();
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            try
             {
-                using (NetworkStream stream = client.GetStream())
+                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) != 0) // 데이터를 읽어들이는 동안 반복
                 {
-                    do
-                    {
-                        Debug.Log(string.Format("{0} : {1}", stream.ReadByte(), index));
-                    } while (true);
+                    string receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                    Console.WriteLine(Constants.ip);
+                    Console.WriteLine("수신된 메시지: " + receivedMessage + " : " + index);
+
+                    // 클라이언트에게 응답 메시지 전송
+                    byte[] sendData = Encoding.ASCII.GetBytes("서버 응답: " + receivedMessage);
+                    stream.Write(sendData, 0, sendData.Length);
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("클라이언트 연결 오류: " + e.Message);
+            }
+            finally
+            {
+                client.Close(); // 클라이언트와의 연결을 닫음
+                Console.WriteLine("클라이언트 연결 종료.");
             }
         }
 #if false

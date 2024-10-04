@@ -9,7 +9,6 @@ class Program
     private const int MaxClients = 4; // 최대 4개의 클라이언트
     private static TcpClient[] clients = new TcpClient[MaxClients];
     private static int clientCount = 0;
-
     static void Main()
     {
         TcpListener server = new TcpListener(IPAddress.Any, 5000);
