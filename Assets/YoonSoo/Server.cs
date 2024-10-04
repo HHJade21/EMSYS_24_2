@@ -24,15 +24,15 @@ namespace DireRaven22075
             server = new TcpListener(IPAddress.Any, Constants.port);
             Debug.Log("서버가 시작되었습니다. 포트 5000에서 대기 중...");
             server.Start();
-            StartCoroutine(StartServer());
+            StartServer();
         }
-        private IEnumerator StartServer()
+        private async void StartServer()
         {
             while (true)
             {
                 if (clientCount < Constants.maxConnection)
                 {
-                    TcpClient client = server.AcceptTcpClient();
+                    TcpClient client = await server.AcceptTcpClientAsync();
                     clients[clientCount++] = client;
                     Debug.Log($"클라이언트 {clientCount}이(가) 연결되었습니다.");
                     Thread thread = new Thread(() => HandleClient(client, clientCount - 1));
@@ -44,7 +44,6 @@ namespace DireRaven22075
                     TcpClient client = server.AcceptTcpClient();
                     client.Close();
                 }
-                yield return null;
             }
         }
         private void HandleClient(TcpClient client, int index)
