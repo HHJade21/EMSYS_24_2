@@ -14,6 +14,9 @@ namespace DireRaven22075
 {
     public partial class Client : MonoBehaviour
     {
+    }
+}
+#if false
         private TcpClient connection;
         private void Start()
         {
@@ -55,7 +58,7 @@ namespace DireRaven22075
                 Debug.Log($"Socket exception: {e}");
             }
         }
-#if false
+//#if false
         private TcpClient socketConnection;
         private void ConnectToTcpServer()
         {
@@ -108,6 +111,6 @@ namespace DireRaven22075
                 Debug.Log("Socket exception: " + socketException);
             }
         }
-#endif
     }
 }
+#endif

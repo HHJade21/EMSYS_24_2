@@ -14,6 +14,9 @@ namespace DireRaven22075
 {
     public class Server : Singleton<NetworkManager>
     {
+    }
+}
+#if false
         private TcpListener server;
         [SerializeField]
         private TcpClient[] clients = new TcpClient[Constants.maxConnection];
@@ -76,7 +79,7 @@ namespace DireRaven22075
                 Console.WriteLine("클라이언트 연결 종료.");
             }
         }
-#if false
+//#if false
         #region setting value
         private const int maxConnection = 10;
         private const int port = 50001;
@@ -138,6 +141,6 @@ namespace DireRaven22075
         }
     }
 }
-#endif
     }
 }
+#endif

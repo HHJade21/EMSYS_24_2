@@ -10,6 +10,9 @@ namespace DireRaven22075.Network
 {
     public partial class Server : MonoBehaviour
     {
+    }
+}
+#if false
         private TcpListener server;
         private void Awake()
         {
@@ -39,3 +42,4 @@ namespace DireRaven22075.Network
         }
     }
 }
+#endif
